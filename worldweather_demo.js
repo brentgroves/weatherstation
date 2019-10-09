@@ -3,8 +3,9 @@ const fs = require("fs");
 
 (async () => {
 
-const key = fs.readFileSync("openweathermap.key");
-debugger;
+const key = await fs.readFileSync("openweathermap.key");
+console.log(key)
+    debugger;
 //_"get city weather"
 const city = "London";
     try  {
@@ -24,7 +25,8 @@ req.query({
 
 req.headers({
 	"x-rapidapi-host": "community-open-weather-map.p.rapidapi.com",
-	"x-rapidapi-key": "dc59884865msh6226ce75c42da70p1d91dbjsn7f815266c087"
+    "x-rapidapi-key": `${key}`
+//	"x-rapidapi-key": "dc59884865msh6226ce75c42da70p1d91dbjsn7f815266c087"
 });
 
 
