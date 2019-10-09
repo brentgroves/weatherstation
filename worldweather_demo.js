@@ -1,47 +1,6 @@
 const unirest = require('unirest');
 const fs = require('fs');
-
-// (async () => {
-//   let key = await fs.readFileSync('openweathermap.key', 'utf-8');
-//   key = key.trim();
-//   //var v = "dc59884865msh6226ce75c42da70p1d91dbjsn7f815266c087"
-//   debugger;
-//   //_"get city weather"
-//   const city = 'London';
-//   try {
-//     debugger;
-//     const mykey = key;
-//
-//     var req = unirest(
-//       'GET',
-//       'https://community-open-weather-map.p.rapidapi.com/weather',
-//     );
-//
-//     req.query({
-//       callback: 'test',
-//       id: '2172797',
-//       units: '"metric" or "imperial"',
-//       mode: 'xml, html',
-//       q: 'London,uk',
-//     });
-//
-//     req.headers({
-//       'x-rapidapi-host': 'community-open-weather-map.p.rapidapi.com',
-//       'x-rapidapi-key': key,
-//       //
-//       //    "x-rapidapi-key": "dc59884865msh6226ce75c42da70p1d91dbjsn7f815266c087"
-//     });
-//
-//     req.end(function(res) {
-//       if (res.error) throw new Error(res.error);
-//
-//       console.log(res.body);
-//     });
-//   } catch (err) {
-//     console.log('Error = ', err);
-//   }
-//   // */
-// })();
+const cities = ['London', 'Paris','New York','Moscow','Ho chi min','Benjing','Reykjavik' ,'Nouakchott','Ushuaia' ,'Longyearbyen'];
 
 //_"accessing the openweathermap API key"
 
