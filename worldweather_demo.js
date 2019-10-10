@@ -1,20 +1,10 @@
 const unirest = require('unirest');
 const fs = require('fs');
-const cities = ['London', 'Paris','New York','Moscow','Ho chi min','Benjing','Reykjavik' ,'Nouakchott','Ushuaia' ,'Longyearbyen'];
 
-//_"accessing the openweathermap API key"
-
-function extractUsefulData(data) {
-
-  return {
-    city: 'test'
-  };
-}
 async function getCityWeather(city, key) {
   debugger;
   const result = await new Promise(resolve => {
     debugger;
-    try {
       var req = unirest(
         'GET',
         'https://community-open-weather-map.p.rapidapi.com/weather',
@@ -26,7 +16,7 @@ async function getCityWeather(city, key) {
         //units: '"metric" or "imperial"',
         units:'imperial',
         mode: 'xml, html',
-        q: 'London,uk',
+        q: city,
       });
 
       req.headers({
@@ -37,15 +27,11 @@ async function getCityWeather(city, key) {
       });
 
       req.end(function(res) {
-        if (res.error) throw new Error(res.error);
-
-      //  console.log(res.body);
+          if (res.error){
+            throw new Error(res.error)
+          } 
         resolve(res);
       });
-
-    } catch (err) {
-      console.log('Error = ', err);
-    }
 
   });
     
@@ -55,19 +41,7 @@ async function getCityWeather(city, key) {
       return result.body;
 }
 //_"extract useful data"
-async function getTemp(){
 
-var weather= await getCityWeather('t','1');
-    console.log(weather.main)
-    console.log(weather.main.temp)
-
-}
-
-
-getTemp();
-
-
-/*
 function unixEpoqToDate(unixDate) {
   const d = new Date(0);
   d.setUTCSeconds(unixDate);
@@ -76,7 +50,7 @@ function unixEpoqToDate(unixDate) {
 
 function extractUsefulData(data) {
   return {
-    city: data.city,
+    city: data.name,
     date: new Date(),
     observation_time: unixEpoqToDate(data.dt),
     temperature: data.main.temp,
@@ -85,4 +59,63 @@ function extractUsefulData(data) {
     weather: data.weather[0].main,
   };
 }
+
+
+const cities = ['London', 'Paris','New York','Moscow','Nouakchott','Ushuaia' ,'Longyearbyen'];
+
+
+const city_data_map = { };
+
+// a infinite round-robin iterator over the city array
+const next_city  = ((arr) => {
+   let counter = arr.length;
+   return function() {
+      counter += 1;
+      if (counter>=arr.length) {
+        counter = 0;
+      }
+      return arr[counter];
+   };
+})(cities);
+
+async function update_city_data(city) {
+
+    try {
+        const data  = await getCityWeather(city);
+        city_data_map[city] = extractUsefulData(data);
+    }
+    catch(err) {
+        console.log("error city",city , err);
+        return ;
+    }
+}
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+async function displayCityWeather(){
+  for(var i=0;i<cities.length;i++){
+     const city = next_city();
+     console.log("updating city =",city);
+      sleep(5000)
+      await update_city_data(city);
+  }
+  console.log(city_data_map)
+}
+displayCityWeather()
+
+// make a API call every 10 seconds
+/*
+const interval = 10 * 1000;
+setInterval(async () => {
+     const city = next_city();
+     console.log("updating city =",city);
+     await update_city_data(city);
+}, interval);
 */
+
