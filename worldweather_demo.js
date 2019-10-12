@@ -1,7 +1,10 @@
 const unirest = require('unirest');
 const fs = require('fs');
 
-async function getCityWeather(city, key) {
+var key = fs.readFileSync("openweathermap.key","utf-8");
+var key=key.trim();
+
+async function getCityWeather(city) {
   debugger;
   const result = await new Promise(resolve => {
     debugger;
@@ -21,9 +24,9 @@ async function getCityWeather(city, key) {
 
       req.headers({
         'x-rapidapi-host': 'community-open-weather-map.p.rapidapi.com',
-        //  'x-rapidapi-key': key,
+        'x-rapidapi-key': key,
         //
-        'x-rapidapi-key': 'dc59884865msh6226ce75c42da70p1d91dbjsn7f815266c087',
+        //'x-rapidapi-key': 'dc59884865msh6226ce75c42da70p1d91dbjsn7f815266c087',
       });
 
       req.end(function(res) {
@@ -60,6 +63,8 @@ function extractUsefulData(data) {
   };
 }
 
+
+//const cities = ['London', 'Paris','New York','Moscow','Nouakchott','Ushuaia' ,'Longyearbyen'];
 
 const cities = ['London', 'Paris','New York','Moscow','Nouakchott','Ushuaia' ,'Longyearbyen'];
 
