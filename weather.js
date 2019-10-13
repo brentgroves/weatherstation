@@ -3,6 +3,7 @@ Error.stackTraceLimit = Infinity;
 
 /*global require,setInterval,console */
 
+// var endpointUrl = "opc.tcp://brent-desktop:4334";
 
 const cities = ['London', 'Paris','New York','Moscow','Nouakchott','Ushuaia' ,'Longyearbyen'];
 const fs = require("fs");
@@ -111,7 +112,6 @@ async function update_city_data(city) {
     try {
         const data  = await getCityWeather(city);
         city_data_map[city] = extractUsefulData(data);
-        debugger;
     }
     catch(err) {
         console.log("error city",city , err);
@@ -119,20 +119,13 @@ async function update_city_data(city) {
     }
 }
 
-// make a API call every 10 seconds
-const interval = 10 * 1000;
-setInterval(async () => {
-     const city = next_city();
-     console.log("updating city =",city);
-     await update_city_data(city);
-     console.log(city_data_map[city]);
-}, interval);
 
 const opcua = require("node-opcua");
 
 
 function construct_my_address_space(server) {
     // declare some folders
+    debugger;
     const addressSpace = server.engine.addressSpace;
     const namespace = addressSpace.getOwnNamespace();
     const objectsFolder = addressSpace.rootFolder.objects;
@@ -175,7 +168,7 @@ function construct_my_address_space(server) {
 function extract_value(dataType,city_name,property) {
     const city = city_data_map[city_name];
     if (!city) {
-        return opcua.StausCodes.BadDataUnavailable
+        return opcua.StatusCodes.BadDataUnavailable
     }
 
     const value = city[property];
@@ -199,14 +192,33 @@ function extract_value(dataType,city_name,property) {
       await server.initialize();
       construct_my_address_space(server);
       await server.start();
-      
       console.log("Server is now listening ... ( press CTRL+C to stop)");
       console.log("port ", server.endpoints[0].port);
       const endpointUrl = server.endpoints[0].endpointDescriptions()[0].endpointUrl;
       console.log(" the primary server endpoint url is ", endpointUrl );
-      
+      debugger; 
     }
     catch(err) {
        console.log("Error = ",err);
     }
 })();
+
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+//make a API call every 10 seconds
+
+const interval = 10 * 1000;
+setInterval(async () => {
+     const city = next_city();
+     console.log("updating city =",city);
+     await update_city_data(city);
+     console.log(city_data_map[city]);
+}, interval);
